@@ -81,4 +81,15 @@ public class Spring {
 
         return x;
     }
+
+    public Spring inSeries(Spring that) {
+        double k = this.k + that.k;
+        return new Spring(k);
+    }
+
+    public Spring inParallel(Spring that) {
+        double k = 1.0 / (1.0/this.k + 1.0/that.k);
+        return new Spring(k);
+    }
+
 }
