@@ -1,84 +1,56 @@
 public class Spring {
+    private double k = 1.0;
 
-    private double k = 1;
+    public Spring() {}
 
-    public Spring(){
-
-    }
-
-    public Spring(double k){
-        this.setK(k);
-    }
-
-    public double getK() {
-        return k;
-    }
-
-    private void setK(double k) {
+    public Spring(double k) {
         this.k = k;
     }
 
-    private double[] positionsCalculator(double dt, int n, double[] x, double[] v) {
-        for (int i = 1; i < n; i++) {
-            double a = -this.k * x[i-1];
-            v[i] = v[i-1] + a * dt;
-            x[i] = x[i-1] + v[i] * dt;
-        }
-
-        return x;
+    public double getStiffness() {
+        return k;
     }
 
-    private void positionsCalculator(double dt, int n, double[] x, double[] v, double m) {
-        for (int i = 1; i < n; i++) {
-            double a = -this.k * x[i-1] / m;
-            v[i] = v[i-1] + a * dt;
-            x[i] = x[i-1] + v[i] * dt;
-        }
+    private void setStiffness(double k) {
+        this.k = k;
     }
 
     public double[] move(double t, double dt, double x0, double v0) {
-        int n = (int) Math.ceil(t / dt);
-        double[] x = new double[n];
-        double[] v = new double[n];
-        x[0] = x0;
-        v[0] = v0;
-
-        return positionsCalculator(dt, n, x, v);
-    }
-
-    public double[] move(double t, double dt, double x0) {
-        int n = (int) Math.ceil(t / dt);
-        double[] x = new double[n];
-        double[] v = new double[n];
-        x[0] = x0;
-        v[0] = 0;
-
-        return positionsCalculator(dt, n, x, v);
-    }
-
-    public double[] move(double t0, double t1, double dt, double x0, double v0) {
-        int n = (int) Math.ceil((t1 - t0) / dt);
-        double[] x = new double[n];
-        double[] v = new double[n];
-
-        x[0] = x0;
-        v[0] = v0;
-
-        positionsCalculator(dt, n, x, v);
-
+        int numSteps = (int) (t / dt);
+        double[] x = new double[numSteps];
+        double v = v0;
+        double xPrev = x0;
+        for (int i = 0; i < numSteps; i++) {
+            double acceleration = -k * xPrev;
+            double xNew = xPrev + v * dt;
+            v = v + acceleration * dt;
+            x[i] = xPrev;
+            xPrev = xNew;
+        }
         return x;
     }
 
+    public double[] move(double t, double dt, double x0) {
+        return move(t, dt, x0, 0.0);
+    }
+
+    public double[] move(double t0, double t1, double dt, double x0, double v0) {
+        return move(t0,t1,dt,x0,v0,1.0);
+    }
+
     public double[] move(double t0, double t1, double dt, double x0, double v0, double m) {
-        int n = (int) Math.ceil((t1 - t0) / dt);
-        double[] x = new double[n];
-        double[] v = new double[n];
-
-        x[0] = x0;
-        v[0] = v0;
-
-        positionsCalculator(dt, n, x, v, m);
-
+        int numSteps = (int) ((t1 - t0) / dt);
+        double[] x = new double[numSteps];
+        double v = v0;
+        double xPrev = x0;
+        for (int i = 0; i < numSteps; i++) {
+            double force = -k * xPrev;
+            double acceleration = force / m;
+            double xNew = xPrev + v * dt;
+            v = v + acceleration * dt;
+            x[i] = xPrev;
+            xPrev = xNew;
+        }
         return x;
     }
 
@@ -88,7 +60,7 @@ public class Spring {
     }
 
     public Spring inParallel(Spring that) {
-        double k = 1.0 / (1.0/this.k + 1.0/that.k);
+        double k = (this.k * that.k)/(this.k + that.k);
         return new Spring(k);
     }
 
