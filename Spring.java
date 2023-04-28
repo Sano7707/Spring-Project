@@ -11,7 +11,7 @@ public class Spring {
         return k;
     }
 
-    private void setStiffness(double k) {
+    void setStiffness(double k) {
         this.k = k;
     }
 

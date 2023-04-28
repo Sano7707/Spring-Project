@@ -1,54 +1,68 @@
-import java.util.Arrays;
-
 public class ConverterFloat extends Converter {
-    private int convertToInt(String binarySequence) {
-        int result = 0;
-        for (int i = 0; i < binarySequence.length(); i++) {
-            if (binarySequence.charAt(i) == '1') {
-                result += Math.pow(2, binarySequence.length() - 1 - i);
-            }
-        }
-        return result;
+    private String intPart;
+    private String fracPart;
+
+    public ConverterFloat(String intPart, String fracPart) {
+        this.intPart = intPart;
+        this.fracPart = fracPart;
     }
 
     @Override
-    public double convertToDecimal(String binarySequence) {
-        int dotIndex = binarySequence.indexOf(".");
-        String integerPart = binarySequence.substring(0, dotIndex);
-        String fractionalPart = binarySequence.substring(dotIndex + 1);
-        int integer = convertToInt(integerPart);
-        double fractional = 0;
-        for (int i = 0; i < fractionalPart.length(); i++) {
-            if (fractionalPart.charAt(i) == '1') {
-                fractional += 1 / Math.pow(2, i + 1);
-            }
-        }
-        return integer + fractional;
+    public Spring[] binaryToSprings(String binary) {
+        // implementation not relevant for this class
+        return null;
     }
 
     @Override
-    public double evaluateDecimalValue(double[] frequencyAmplitudes) {
-        double result = 0;
-        for (int i = 0; i < frequencyAmplitudes.length; i++) {
-            result += frequencyAmplitudes[i];
-        }
-        return result;
-    }
+    public double evaluateDecimal(String binary) {
+        double intVal = 0.0;
+        double fracVal = 0.0;
 
+        for (int i = 0; i < intPart.length(); i++) {
+            if (intPart.charAt(i) == '1') {
+                intVal += Math.pow(2, intPart.length() - i - 1);
+            }
+        }
+
+        for (int i = 0; i < fracPart.length(); i++) {
+            if (fracPart.charAt(i) == '1') {
+                fracVal += Math.pow(2, -(i + 1));
+            }
+        }
+
+        return intVal + fracVal;
+    }
     public static void main(String[] args) {
-        ConverterFloat converter = new ConverterFloat();
+        // Test case 1
+        String intPart1 = "1011";
+        String fracPart1 = "1101";
+        ConverterFloat converter1 = new ConverterFloat(intPart1, fracPart1);
+        double result1 = converter1.evaluateDecimal("");
+        System.out.println("Test case 1:");
+        System.out.println("Binary: " + intPart1 + "." + fracPart1);
+        System.out.println("Decimal: " + result1);
+        System.out.println();
 
-        String binarySequence1 = "1010.1101";
-        double decimalValue1 = converter.convertToDecimal(binarySequence1);
-        System.out.println(binarySequence1 + " = " + decimalValue1);
+        // Test case 2
+        String intPart2 = "111001";
+        String fracPart2 = "10011";
+        ConverterFloat converter2 = new ConverterFloat(intPart2, fracPart2);
+        double result2 = converter2.evaluateDecimal("");
+        System.out.println("Test case 2:");
+        System.out.println("Binary: " + intPart2 + "." + fracPart2);
+        System.out.println("Decimal: " + result2);
+        System.out.println();
 
-        String binarySequence2 = "1111.0011";
-        double decimalValue2 = converter.convertToDecimal(binarySequence2);
-        System.out.println(binarySequence2 + " = " + decimalValue2);
-
-        double[] frequencyAmplitudes = {1.2, 2.3, 3.4};
-        double decimalValue3 = converter.evaluateDecimalValue(frequencyAmplitudes);
-        System.out.println(Arrays.toString(frequencyAmplitudes) + " = " + decimalValue3);
+        // Test case 3
+        String intPart3 = "10";
+        String fracPart3 = "01";
+        ConverterFloat converter3 = new ConverterFloat(intPart3, fracPart3);
+        double result3 = converter3.evaluateDecimal("");
+        System.out.println("Test case 3:");
+        System.out.println("Binary: " + intPart3 + "." + fracPart3);
+        System.out.println("Decimal: " + result3);
+        System.out.println();
     }
+
 
 }
